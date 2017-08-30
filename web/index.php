@@ -28,19 +28,26 @@ $app->run();
 $url = $_GET['url'];
 $curl_url = 'https://labs.diffbot.com/testdrive/article?token=testdriverehjenztgeil&url='.$url;
 
-// init curl object        
-$ch = curl_init();
+<?php 
+$proxies = array('86.188.142.244:8080'); // random public http proxy
 
-// define options
-$optArray = array(
-    CURLOPT_URL => $curl_url,
-    CURLOPT_RETURNTRANSFER => true
-);
+function getData($proxylist)
+{
+    $rand_proxy = rand(0,count($proxylist)-1);
+    $agent = "Mozilla/5.0 (X11; U; Linux i686; en-US) AppleWebKit/532.4 (KHTML, like Gecko) Chrome/4.0.233.0 Safari/532.4";
+    $referer = "http://www.google.com/";
 
-// apply those options
-curl_setopt_array($ch, $optArray);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $curl_url);
+    curl_setopt($ch, CURLOPT_HEADER, 1);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_USERAGENT, $agent);
+    curl_setopt($ch, CURLOPT_REFERER, $referer);
+    curl_setopt($ch, CURLOPT_PROXY, $proxylist[$rand_proxy]);
+    $data = curl_exec($ch);
+    if($data!==true){$ex=new RuntimeException('curl_exec error. errno: '.curl_errno($ch).' error: '.curl_error($ch));@curl_close($ch);throw $ex;}
+    curl_close($ch);
+    echo $data;
+}
 
-// execute request and get response
-$result = curl_exec($ch);
-
-echo $result;
+getData($proxies);
