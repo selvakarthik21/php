@@ -24,7 +24,7 @@ $app->get('/', function() use($app) {
 
 $app->run();
 */
-
+/*
 $url = $_GET['url'];
 $curl_url = 'https://labs.diffbot.com/testdrive/article?token=testdriverehjenztgeil&url='.$url;
 
@@ -50,4 +50,21 @@ function getData($proxylist)
     echo $data;
 }
 
-getData($proxies);
+getData($proxies);*/
+
+
+
+$url = $_GET['url'];
+$curl_url = 'https://labs.diffbot.com/testdrive/article?token=testdriverehjenztgeil&url='.$url;
+// init curl object        
+$ch = curl_init();
+// define options
+$optArray = array(
+    CURLOPT_URL => $curl_url,
+    CURLOPT_RETURNTRANSFER => true
+);
+// apply those options
+curl_setopt_array($ch, $optArray);
+// execute request and get response
+$result = curl_exec($ch);
+echo $result;
